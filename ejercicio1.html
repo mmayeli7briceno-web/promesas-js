@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de planetas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+    }
+    div { margin-bottom: 10px; }
+    label { display: block; margin-bottom: 3px; }
+    input { width: 100%; padding: 6px; }
+    button { padding: 6px 12px; }
+  </style>
+</head>
+<body>
+
+  <form action="" id="formBuscador">
+    <div>
+      <input type="text" id="idplaneta" placeholder="Ejemplo: 1">
+      <button type="submit">Buscar</button>
+    </div>
+
+    <div>
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre">
+    </div>
+
+    <div>
+      <label for="clima">Clima:</label>
+      <input type="text" id="clima">
+    </div>
+
+    <div>
+      <label for="terreno">Terreno:</label>
+      <input type="text" id="terreno">
+    </div>
+
+    <div>
+      <label for="poblacion">Población:</label>
+      <input type="text" id="poblacion">
+    </div>
+
+    <div>
+      <label for="diametro">Diámetro:</label>
+      <input type="text" id="diametro">
+    </div>
+  </form>
+
+  <script>
+
+    const formulario = document.getElementById('formBuscador')
+    const id = document.getElementById('idplaneta')
+    const nombre = document.getElementById('nombre')
+    const clima = document.getElementById('clima')
+    const terreno = document.getElementById('terreno')
+    const poblacion = document.getElementById('poblacion')
+    const diametro = document.getElementById('diametro')
+
+    //submit event (envio)
+    formulario.addEventListener("submit", (event) => {
+      event.preventDefault()  
+
+      obtenerPlaneta(id.value)
+    })
+
+    async function obtenerPlaneta(id) {
+      const API_URL = `https://swapi.dev/api/planets/${id}/`
+
+      try {
+        const respuesta = await fetch(API_URL)
+
+        if (!respuesta.ok) {
+          if (respuesta.status === 404) {
+            nombre.value = ''
+            clima.value = ''
+            terreno.value = ''
+            poblacion.value = ''
+            diametro.value = ''
+            alert('No existe este planeta')
+          }
+          throw new Error(`Error de comunicación`)
+        }
+
+        const datos = await respuesta.json()
+
+        nombre.value = datos.name
+        clima.value = datos.climate
+        terreno.value = datos.terrain
+        poblacion.value = datos.population
+        diametro.value = datos.diameter
+
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  </script>
+</body>
+</html>

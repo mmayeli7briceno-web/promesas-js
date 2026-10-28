@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de naves espaciales</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+    }
+    div { margin-bottom: 10px; }
+    label { display: block; margin-bottom: 3px; }
+    input { width: 100%; padding: 6px; }
+    button { padding: 6px 12px; }
+  </style>
+</head>
+<body>
+
+  <form action="" id="formBuscador">
+    <div>
+      <input type="text" id="idnave" placeholder="Ejem. 9">
+      <button type="submit">Buscar</button>
+    </div>
+
+    <div>
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre">
+    </div>
+
+    <div>
+      <label for="modelo">Modelo:</label>
+      <input type="text" id="modelo">
+    </div>
+
+    <div>
+      <label for="fabricante">Fabricante:</label>
+      <input type="text" id="fabricante">
+    </div>
+
+    <div>
+      <label for="pasajeros">Cantidad de Pasajeros:</label>
+      <input type="text" id="pasajeros">
+    </div>
+
+    <div>
+      <label for="tripulacion">Tripulación:</label>
+      <input type="text" id="tripulacion">
+    </div>
+  </form>
+
+  <script>
+
+    const formulario = document.getElementById('formBuscador')
+    const id = document.getElementById('idnave')
+    const nombre = document.getElementById('nombre')
+    const modelo = document.getElementById('modelo')
+    const fabricante = document.getElementById('fabricante')
+    const pasajeros = document.getElementById('pasajeros')
+    const tripulacion = document.getElementById('tripulacion')
+
+    //submit event (envio)
+    formulario.addEventListener("submit", (event) => {
+      event.preventDefault()  //Detener el envio
+
+      obtenerNave(id.value)
+    })
+
+    async function obtenerNave(id) {
+      const API_URL = `https://swapi.dev/api/starships/${id}/`
+
+      try {
+        const respuesta = await fetch(API_URL)
+
+        if (!respuesta.ok) {
+          //Si no encontraste el dato
+          if (respuesta.status === 404) {
+            nombre.value = ''
+            modelo.value = ''
+            fabricante.value = ''
+            pasajeros.value = ''
+            tripulacion.value = ''
+            alert('No existe esta nave')
+          }
+          throw new Error(`Error de comunicación`)
+        }
+
+        const datos = await respuesta.json()
+
+        //Enviando resultados al formulario
+        nombre.value = datos.name
+        modelo.value = datos.model
+        fabricante.value = datos.manufacturer
+        pasajeros.value = datos.passengers
+        tripulacion.value = datos.crew
+
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  </script>
+</body>
+</html>

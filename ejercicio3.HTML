@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador Dragon Ball</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 320px;
+    }
+    div { margin-bottom: 10px; }
+    label { display: block; margin-bottom: 3px; }
+    input, textarea { width: 100%; padding: 6px; box-sizing: border-box; }
+    button { padding: 6px 12px; }
+    img { max-width: 100%; max-height: 300px; display: block; margin: 0 auto; }
+  </style>
+</head>
+<body>
+
+  <form action="" id="formBuscador">
+    <div>
+      <input type="text" id="idpersonaje" placeholder="Ejem. 1">
+      <button type="submit">Buscar</button>
+    </div>
+
+    <div>
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre">
+    </div>
+
+    <div>
+      <label for="descripcion">Descripción:</label>
+      <textarea id="descripcion" rows="6"></textarea>
+    </div>
+
+    <div>
+      <label>Imagen:</label>
+      <img id="imagen" src="" alt="">
+    </div>
+  </form>
+
+  <script>
+
+    const formulario = document.getElementById('formBuscador')
+    const id = document.getElementById('idpersonaje')
+    const nombre = document.getElementById('nombre')
+    const descripcion = document.getElementById('descripcion')
+    const imagen = document.getElementById('imagen')
+
+    //submit event (envio)
+    formulario.addEventListener("submit", (event) => {
+      event.preventDefault()  //Detener el envio
+
+      obtenerPersonaje(id.value)
+    })
+
+    function limpiar() {
+      nombre.value = ''
+      descripcion.value = ''
+      imagen.removeAttribute('src')
+    }
+
+    async function obtenerPersonaje(id) {
+      const API_URL = `https://dragonball-api.com/api/characters/${id}`
+
+      try {
+        const respuesta = await fetch(API_URL)
+
+        if (!respuesta.ok) {
+          limpiar()
+          alert('No existe este personaje')
+          throw new Error(`Error de comunicación: ${respuesta.status}`)
+        }
+
+        const datos = await respuesta.json()
+
+        //Si la respuesta llega sin datos del personaje
+        if (!datos.name) {
+          limpiar()
+          alert('No existe este personaje')
+          return
+        }
+
+        //Enviando resultados al formulario
+        nombre.value = datos.name
+        descripcion.value = datos.description
+        imagen.src = datos.image
+        imagen.alt = datos.name
+
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  </script>
+</body>
+</html>
